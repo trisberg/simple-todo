@@ -22,8 +22,8 @@ A beautiful and feature-rich todo list application built with Spring Boot, Thyme
 - Real-time todo statistics
 
 ### 🔧 Technical Features
-- Spring Boot 3.2.0
-- Java 17
+- Spring Boot 3.5.5
+- Java 21
 - H2 in-memory database
 - JPA/Hibernate for data persistence
 - Thymeleaf templating engine
@@ -34,7 +34,7 @@ A beautiful and feature-rich todo list application built with Spring Boot, Thyme
 ## Quick Start
 
 ### Prerequisites
-- Java 17 or higher
+- Java 21 or higher
 - Maven 3.6+ (or use the Maven wrapper included)
 - PostgreSQL 12+ (for production) or use H2 (for development)
 
