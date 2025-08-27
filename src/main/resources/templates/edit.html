@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Todo - Simple Todo List</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </div>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-edit"></i> Edit Todo</h1>
+            <a th:href="@{/}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Todo List
+            </a>
+        </header>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Edit Todo Form -->
+        <div class="edit-todo-section card">
+            <form th:action="@{'/todos/' + ${todo.id} + '/edit'}" method="post" th:object="${todo}" class="edit-todo-form">
+                <div class="form-group">
+                    <label for="task" class="form-label">
+                        <i class="fas fa-tasks"></i> Task Description
+                    </label>
+                    <textarea th:field="*{task}" id="task" class="todo-textarea" rows="3" required placeholder="Enter your todo description..."></textarea>
+                    <div th:if="${#fields.hasErrors('task')}" class="error-message">
+                        <span th:errors="*{task}"></span>
+                    </div>
+                </div>
+
+                <div class="todo-info">
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        <strong>Created:</strong> 
+                        <span th:text="${#temporals.format(todo.createdAt, 'MMMM dd, yyyy \'at\' HH:mm')}"></span>
+                    </div>
+                    <div class="info-item" th:if="${todo.updatedAt != todo.createdAt}">
+                        <i class="fas fa-edit"></i>
+                        <strong>Last Updated:</strong> 
+                        <span th:text="${#temporals.format(todo.updatedAt, 'MMMM dd, yyyy \'at\' HH:mm')}"></span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas" th:classappend="${todo.completed} ? 'fa-check-circle' : 'fa-clock'"></i>
+                        <strong>Status:</strong> 
+                        <span th:text="${todo.completed} ? 'Completed' : 'Pending'" 
+                              th:class="${todo.completed} ? 'status-completed' : 'status-pending'"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a th:href="@{/}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Additional Actions -->
+        <div class="additional-actions card">
+            <form th:action="@{'/todos/' + ${todo.id} + '/toggle'}" method="post" class="toggle-status-form">
+                <button type="submit" class="btn" 
+                        th:classappend="${todo.completed} ? 'btn-warning' : 'btn-success'">
+                    <i class="fas" th:classappend="${todo.completed} ? 'fa-undo' : 'fa-check'"></i>
+                    <span th:text="${todo.completed} ? 'Mark as Pending' : 'Mark as Completed'"></span>
+                </button>
+            </form>
+
+            <form th:action="@{'/todos/' + ${todo.id} + '/delete'}" method="post" 
+                  onsubmit="return confirm('Are you sure you want to delete this todo? This action cannot be undone.')"
+                  class="delete-todo-form">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete Todo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Simple Todo List. Built with Spring Boot & Thymeleaf.</p>
+    </footer>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Apply saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+
+        // Add loading state to forms
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.classList.add('loading');
+                        submitButton.disabled = true;
+                    }
+                });
+            });
+        });
+
+        // Auto-resize textarea
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.querySelector('.todo-textarea');
+            if (textarea) {
+                function autoResize() {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = textarea.scrollHeight + 'px';
+                }
+                
+                textarea.addEventListener('input', autoResize);
+                autoResize(); // Initial resize
+            }
+        });
+    </script>
+</body>
+</html>

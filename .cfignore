@@ -1,0 +1,67 @@
+# Cloud Foundry ignore file
+# Excludes files and directories from being uploaded during 'cf push'
+
+# Source code (not needed in production)
+src/
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+
+# Development and build artifacts  
+.git/
+.gitignore
+*.log
+app.log
+nohup.out
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js (if applicable)
+node_modules/
+npm-debug.log*
+
+# Documentation (optional, keep if needed)
+README.md
+*.md
+
+# Docker files (not needed for CF)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test files
+src/test/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Maven target directory (except the JAR)
+target/surefire-reports/
+target/maven-status/
+target/maven-archiver/
+target/classes/
+target/test-classes/
+target/generated-sources/
+target/generated-test-sources/
+
+# Keep only the built JAR file
+!target/*.jar

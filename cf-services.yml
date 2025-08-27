@@ -1,0 +1,51 @@
+# Cloud Foundry Services Configuration
+# This file documents the services required for the Simple Todo application
+
+# PostgreSQL Database Service
+# Create with: cf create-service postgres shared-postgres simple-todo-postgres
+postgres:
+  service: postgres
+  plan: shared-postgres  # Use appropriate plan for your CF platform
+  instance_name: simple-todo-postgres
+  parameters:
+    # Optional parameters depending on your CF platform
+    # backup_retention_period: 7
+    # storage_encrypted: true
+    # multi_az: false
+  tags:
+    - postgresql
+    - database
+    - relational
+
+# Alternative service configurations for different CF platforms:
+
+# For IBM Cloud:
+# ibm_postgres:
+#   service: databases-for-postgresql
+#   plan: standard
+#   instance_name: simple-todo-postgres
+
+# For SAP BTP:
+# sap_postgres:
+#   service: postgresql-db
+#   plan: v9.6-dev
+#   instance_name: simple-todo-postgres
+
+# For Azure Spring Apps:
+# azure_postgres:
+#   service: azure-postgresql-9-6
+#   plan: basic
+#   instance_name: simple-todo-postgres
+
+# User-Provided Service Example (for custom database)
+# Create with: cf create-user-provided-service simple-todo-db-ups -p database-config.json
+user_provided_example:
+  service_type: user-provided
+  instance_name: simple-todo-db-ups
+  credentials:
+    uri: "postgresql://username:password@hostname:5432/database"
+    username: "your_username"
+    password: "your_password"
+    hostname: "your_postgres_host"
+    port: 5432
+    database: "simple_todo_db"
